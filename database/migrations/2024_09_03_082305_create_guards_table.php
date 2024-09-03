@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('guard_number');
-            $table->string('id_number')->unique();
+            $table->string('id_number');
             $table->foreignId('site_id')->nullable()->constrained('sites')->nullOnDelete();
             $table->foreignId('job_title_id')->nullable()->constrained('job_titles')->nullOnDelete();
             $table->string('phone')->nullable();

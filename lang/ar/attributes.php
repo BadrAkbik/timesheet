@@ -63,5 +63,6 @@ return [
     'the_job_title' => 'المسمى الوظيفي',
     'start_date' => 'تاريخ المباشرة',
     'image' => 'صورة',
-    'period_validation' => 'يجب أن تكون الفترة إما ص أو م'
+    'period_validation' => 'يجب أن تكون الفترة إما ص أو م',
+    'import' => 'استيراد',
 ];

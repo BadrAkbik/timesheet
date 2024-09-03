@@ -32,6 +32,6 @@ return [
     'year' => 'year',
     'attachments' => 'Attachments',
     'attachments_view' => 'View attachments',
-    'period_validation' => 'The period must be either (ص) or (م)'
-
+    'period_validation' => 'The period must be either (ص) or (م)',
+    'import' => 'import',
 ];

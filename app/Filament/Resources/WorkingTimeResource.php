@@ -86,7 +86,7 @@ class WorkingTimeResource extends Resource
                     ->sortable(),
                 TextColumn::make('secguard.name')
                     ->label(__('dashboard.the_guard'))
-                    ->sortable(),
+                    ->searchable(isIndividual: true),
                 TextColumn::make('created_at')
                     ->label(__('attributes.created_at'))
                     ->dateTime('d/m/Y H:i:s')
@@ -103,6 +103,7 @@ class WorkingTimeResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -100,6 +100,8 @@ class GuardResource extends Resource
                     ->searchable(),
                 TextColumn::make('guard_number')
                     ->label(__('attributes.guard_number'))
+                    ->sortable()
+                    ->numeric()
                     ->searchable(),
                 TextColumn::make('id_number')
                     ->label(__('attributes.id_number'))
