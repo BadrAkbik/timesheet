@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('guards', function (Blueprint $table) {
             $table->string('iban')->nullable();
             $table->string('bank')->nullable();
-            $table->float('salary', 4)->nullable();
+            $table->float('salary')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::table('guards', function (Blueprint $table) {
             $table->dropColumn('iban');
             $table->dropColumn('bank');
-            $table->dropColumn('salary', 4);
+            $table->dropColumn('salary');
         });
     }
 };

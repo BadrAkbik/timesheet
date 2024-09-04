@@ -85,6 +85,16 @@ class GuardResource extends Resource
                             ->directory('images/guards_images')
                             ->image()
                             ->nullable(),
+                        TextInput::make('iban')
+                            ->label(__('attributes.iban'))
+                            ->maxLength(255)
+                            ->string(),
+                        TextInput::make('bank')
+                            ->label(__('attributes.bank'))
+                            ->maxLength(255)
+                            ->string(),
+                        TextInput::make('salary')
+                            ->label(__('attributes.salary')),
                         Toggle::make('active')
                             ->required(),
                     ])->columns(2)
@@ -127,6 +137,12 @@ class GuardResource extends Resource
                     ->disk('public'),
                 IconColumn::make('active')
                     ->boolean(),
+                TextColumn::make('iban')
+                    ->label(__('attributes.iban')),
+                TextColumn::make('bank')
+                    ->label(__('attributes.bank')),
+                TextColumn::make('salary')
+                    ->label(__('attributes.salary')),
                 TextColumn::make('created_at')
                     ->label(__('attributes.created_at'))
                     ->dateTime('d/m/Y H:i:s')

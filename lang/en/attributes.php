@@ -34,4 +34,7 @@ return [
     'attachments_view' => 'View attachments',
     'period_validation' => 'The period must be either (ص) or (م)',
     'import' => 'import',
+    'iban' => 'Iban',
+    'bank' => 'Bank',
+    'salary' => 'Salary',
 ];
