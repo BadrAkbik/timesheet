@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('guards', function (Blueprint $table) {
             $table->string('iban')->nullable();
             $table->string('bank')->nullable();
-            $table->decimal('salary', 6, 2)->nullable();
+            $table->decimal('salary', 12, 2)->nullable();
         });
     }
 

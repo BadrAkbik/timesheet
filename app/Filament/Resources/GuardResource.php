@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -94,7 +95,11 @@ class GuardResource extends Resource
                             ->maxLength(255)
                             ->string(),
                         TextInput::make('salary')
-                            ->label(__('attributes.salary')),
+                            ->label(__('attributes.salary'))
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric()
+                            ->maxValue(99999999),
                         Toggle::make('active')
                             ->required(),
                     ])->columns(2)
@@ -142,6 +147,8 @@ class GuardResource extends Resource
                 TextColumn::make('bank')
                     ->label(__('attributes.bank')),
                 TextColumn::make('salary')
+                    ->numeric()
+                    ->separator(',')
                     ->label(__('attributes.salary')),
                 TextColumn::make('created_at')
                     ->label(__('attributes.created_at'))
