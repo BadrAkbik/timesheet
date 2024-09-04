@@ -37,4 +37,8 @@ return [
     'iban' => 'Iban',
     'bank' => 'Bank',
     'salary' => 'Salary',
+    'export_reports' => 'Export reports',
+    'all' => 'All',
+    'all_guards' => 'All guards',
+    'guards_select_helper' => 'leave the field empty if you want to get a report for all this site\'s guards'
 ];
