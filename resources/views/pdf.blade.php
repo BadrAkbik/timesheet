@@ -30,7 +30,7 @@
 
         .table_component table {
             border: 1px solid #dededf;
-            height: 100%;
+            height: 99%;
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
