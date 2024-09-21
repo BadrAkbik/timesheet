@@ -20,6 +20,15 @@ class ListGuards extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('download_example')
+                ->label(__('attributes.download_excel_example'))
+                ->color('warning')
+                ->action(function () {
+                    if (!Storage::disk('public')->exists('guards_example.xlsx')) {
+                        abort(404);
+                    }
+                    return Storage::disk('public')->download('guards_example.xlsx');
+                }),
             Action::make('import')
                 ->label(__('attributes.import'))
                 ->color('info')

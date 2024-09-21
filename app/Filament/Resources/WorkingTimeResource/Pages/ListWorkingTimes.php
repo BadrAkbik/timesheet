@@ -28,6 +28,15 @@ class ListWorkingTimes extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('download_example')
+                ->label(__('attributes.download_excel_example'))
+                ->color('warning')
+                ->action(function () {
+                    if (!Storage::disk('public')->exists('workingTime_example.xlsx')) {
+                        abort(404);
+                    }
+                    return Storage::disk('public')->download('workingTime_example.xlsx');
+                }),
             Action::make('import')
                 ->label(__('attributes.import'))
                 ->color('info')

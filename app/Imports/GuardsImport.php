@@ -6,6 +6,7 @@ use App\Models\Guard;
 use App\Models\JobTitle;
 use App\Models\Site;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Validation\ValidationException;
@@ -46,7 +47,7 @@ class GuardsImport implements ToModel, WithValidation, WithHeadingRow
         return [
             'guard_number' => ['required', 'numeric'],
             'name' => ['required', 'string'],
-            'id_number' => ['required', 'numeric'],
+            'id_number' => ['required', 'numeric', Rule::unique('guards', 'id_number')],
             'site' => ['required', 'exists:sites,name'],
             'job' => ['required', 'exists:job_titles,name'],
             'start_date' => ['nullable', 'string'],

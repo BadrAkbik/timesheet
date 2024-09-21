@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GuardResource\Pages;
 use App\Models\Guard;
+use App\Models\Site;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -11,13 +12,17 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 class GuardResource extends Resource
 {
@@ -49,20 +54,28 @@ class GuardResource extends Resource
                             ->label(__('attributes.name'))
                             ->required()
                             ->maxLength(255),
+                        Select::make('site_id')
+                            ->label(__('attributes.site_name'))
+                            ->relationship('site', 'name')
+                            ->exists('sites', 'id')
+                            ->live()
+                            ->preload()
+                            ->nullable(),
                         TextInput::make('guard_number')
                             ->label(__('attributes.guard_number'))
+                            ->disabled(fn(Get $get) => $get('site_id') ? false : true)
+                            ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
+                                return $rule->where('site_id', $get('site_id'));
+                            })
+                            ->validationMessages([
+                                'unique' => 'قيمة هذا الحقل مستخدمة من قبل ضمن نفس الموقع',
+                            ])
                             ->required()
                             ->maxLength(255),
                         TextInput::make('id_number')
                             ->label(__('attributes.id_number'))
                             ->required()
                             ->maxLength(255),
-                        Select::make('site_id')
-                            ->label(__('attributes.site_name'))
-                            ->relationship('site', 'name')
-                            ->exists('sites', 'id')
-                            ->preload()
-                            ->nullable(),
                         Select::make('job_title_id')
                             ->label(__('attributes.the_job_title'))
                             ->relationship('jobTitle', 'name')
@@ -158,15 +171,22 @@ class GuardResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
+                SelectFilter::make('site_id')
+                    ->label(__('attributes.site'))
+                    ->relationship('site', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
