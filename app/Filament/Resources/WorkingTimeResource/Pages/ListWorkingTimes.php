@@ -8,6 +8,7 @@ use App\Models\Guard;
 use App\Models\Site;
 use App\Models\WorkingTime;
 use ArPHP\I18N\Arabic;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -18,7 +19,6 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Blade;
 
 class ListWorkingTimes extends ListRecords
 {
@@ -81,6 +81,24 @@ class ListWorkingTimes extends ListRecords
                             $set('guard', null);
                         })
                         ->required(),
+                    Select::make('month')
+                        ->label(__('dashboard.month'))
+                        ->options(function (Get $get) {
+                            $months = WorkingTime::selectRaw('MONTH(date) as month')
+                                ->distinct()
+                                ->pluck('month');
+                            $monthOptions = [];
+                            foreach ($months as $month) {
+                                $monthName = Carbon::create()->month($month)->translatedFormat('F');
+                                $monthOptions[$month] = $monthName;
+                            }
+                            return $monthOptions;
+                        })
+                        ->placeholder(__('dashboard.month'))
+                        ->searchable(static fn(Select $component) => !$component->isDisabled())
+                        ->live()
+                        ->preload()
+                        ->disabled(fn(Get $get) => $get('site') ? false : true),
                     Select::make('guard')
                         ->label(__('dashboard.the_guard'))
                         ->options(
@@ -95,19 +113,31 @@ class ListWorkingTimes extends ListRecords
                         ->searchable(static fn(Select $component) => !$component->isDisabled())
                         ->live()
                         ->preload()
-                        ->disabled(fn(Get $get) => $get('site') ? false : true)
+                        ->disabled(fn(Get $get) => $get('site') ? false : true),
+
                 ])
                 ->action(function (array $data) {
                     $site = Site::find($data['site']);
-
+                    $guards = Guard::with([
+                        'workingTimes' => function ($query) use ($data) {
+                            $query->when(
+                                $data['month'],
+                                function ($query) use ($data) {
+                                    $startOfMonth = Carbon::createFromDate(null, $data['month'], 1)->startOfMonth()->format('Y-m-d');
+                                    $endOfMonth = Carbon::createFromDate(null, $data['month'], 1)->endOfMonth()->format('Y-m-d');
+                                    $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+                                }
+                            );
+                        }
+                    ]);
                     if (isset($data['guard'])) {
                         $guard_name = Guard::find($data['guard'])->name;
-                        $guards = Guard::with('workingTimes')->where('id', $data['guard'])->get();
+                        $guards = $guards->where('id', $data['guard'])->get();
                     } else {
-                        $guards = Guard::with('workingTimes')->whereHas('workingTimes')->whereBelongsTo($site)->get();
+                        $guards = $guards->whereHas('workingTimes')->whereBelongsTo($site)->get();
                         $guard_name = '';
                     }
-                    $reportHtml = view('pdf', ['guards' => $guards])->render();
+                    $reportHtml = view('working-time-pdf', ['guards' => $guards])->render();
                     $arabic = new Arabic();
                     $p = $arabic->arIdentify($reportHtml);
 
@@ -116,7 +146,6 @@ class ListWorkingTimes extends ListRecords
                         $reportHtml = substr_replace($reportHtml, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
                     }
                     $pdf = PDF::loadHTML($reportHtml);
-
                     return response()->streamDownload(function () use ($pdf) {
                         echo $pdf->stream();
                     }, $site->name . '- ' . $guard_name . '.pdf');

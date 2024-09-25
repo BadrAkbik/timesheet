@@ -22,5 +22,5 @@ return [
     'job_titles' => 'المسميات الوظيفية',
     'working_times' => 'أوقات الدوام',
     'working_time' => 'وقت دوام',
-    
+    'month' => 'الشهر',
 ];

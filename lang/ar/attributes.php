@@ -72,5 +72,6 @@ return [
     'all' => 'الكل',
     'all_guards' => 'كل الحراس',
     'guards_select_helper' => 'اترك الحقل فارغاً في حال كنت تريد تقرير لكل حراس هذا الموقع',
-    'download_excel_example' => 'تحميل ملف مثال عن ملف الإكسل'
+    'download_excel_example' => 'تحميل ملف مثال عن ملف الإكسل',
+    'export_guards' => 'استخراج الحراس',
 ];

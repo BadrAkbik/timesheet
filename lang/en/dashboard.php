@@ -32,4 +32,5 @@ return [
     'job_titles' => 'Job titles',
     'working_times' => 'Working times',
     'working_time' => 'Working time',
+    'month' => 'Month',
 ];

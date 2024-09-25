@@ -4,9 +4,15 @@ namespace App\Filament\Resources\GuardResource\Pages;
 
 use App\Filament\Resources\GuardResource;
 use App\Imports\GuardsImport;
+use App\Models\Guard;
+use App\Models\Site;
+use ArPHP\I18N\Arabic;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -52,7 +58,35 @@ class ListGuards extends ListRecords
                             }
                         }
                     }
-                })
+                }),
+            Action::make('guards_export')
+                ->label(__('attributes.export_guards'))
+                ->color('danger')
+                ->form([
+                    Select::make('site')
+                        ->label(__('attributes.site_name'))
+                        ->options(Site::whereHas('guards')->pluck('name', 'id'))
+                        ->searchable()
+                        ->live(),
+                ])
+                ->action(function (array $data) {
+                    $site_name = isset($data['site']) ? Site::find($data['site'])->name : 'الكل';
+
+                    $guards = isset($data['site']) ? Guard::with('site')->where('site_id', $data['site'])->get() : Guard::with('site')->get();
+                    $reportHtml = view('guards-pdf', ['guards' => $guards])->render();
+                    $arabic = new Arabic();
+                    $p = $arabic->arIdentify($reportHtml);
+
+                    for ($i = count($p) - 1; $i >= 0; $i -= 2) {
+                        $utf8ar = $arabic->utf8Glyphs(substr($reportHtml, $p[$i - 1], $p[$i] - $p[$i - 1]));
+                        $reportHtml = substr_replace($reportHtml, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
+                    }
+                    $pdf = Pdf::loadHTML($reportHtml);
+
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, "{$site_name} - الحراس.pdf");
+                }),
         ];
     }
 }

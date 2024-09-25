@@ -18,7 +18,7 @@
 
 
         @page {
-            size: a4;
+            size: a4 landscape;
             margin: 0;
             padding: 0;
         }
@@ -59,29 +59,44 @@
             color: #000000;
             padding: 5px;
         }
+
+        td {
+            padding: 10px;
+            margin: 10px;
+        }
     </style>
-    @foreach ($guards as $guard)
-        <div class="table_component">
-            <table>
-                <thead>
+
+    <div class="table_component">
+        <table>
+            <thead>
+                <tr>
+                    <th>الراتب</th>
+                    <th>البنك</th>
+                    <th>آيبان</th>
+                    <th>تاريخ المباشرة</th>
+                    <th>الهاتف</th>
+                    <th>المسمى الوظيفي</th>
+                    <th>اسم الموقع</th>
+                    <th>رقم الهوية</th>
+                    <th>رقم الحارس</th>
+                    <th>الاسم</th>
+                </tr>
+                @foreach ($guards as $guard)
                     <tr>
-                        <th colspan="3">{{ $guard->name }}</th>
+                        <td>{{ $guard->salary }}</td>
+                        <td>{{ $guard->iban }}</td>
+                        <td>{{ $guard->bank }}</td>
+                        <td>{{ $guard->start_date }}</td>
+                        <td>{{ $guard->phone }}</td>
+                        <td>{{ $guard->jobTitle->name }}</td>
+                        <td>{{ $guard->site->name }}</td>
+                        <td>{{ $guard->id_number }}</td>
+                        <td>{{ $guard->guard_number }}</td>
+                        <td>{{ $guard->name }}</td>
                     </tr>
-                    <tr>
-                        <th>الفترة</th>
-                        <th>الوقت</th>
-                        <th>التاريخ</th>
-                    </tr>
-                    @foreach ($guard->workingTimes as $workingTime)
-                        <tr>
-                            <td>{{ $workingTime->period }}</td>
-                            <td>{{ $workingTime->time }}</td>
-                            <td>{{ $workingTime->date }}</td>
-                        </tr>
-                    @endforeach
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    @endforeach
+                @endforeach
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
