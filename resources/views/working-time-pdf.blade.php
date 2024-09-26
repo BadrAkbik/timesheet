@@ -75,7 +75,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th colspan="3">{{ $guard->name }}</th>
+                        <th colspan="3">{{ $guard->name }}  ({{ $guard->guard_number }})</th>
                     </tr>
                     <tr>
                         <th>الفترة</th>
