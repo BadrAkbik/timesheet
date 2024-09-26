@@ -72,13 +72,7 @@ class SiteResource extends Resource
             ->filters([
                 //
             ])
-            ->query(function (Site $site) {
-                if (!auth()->user()->hasPermission('sites.viewAll')) {
-                    return $site->whereRelation('WatchPermissions', 'user_id', auth()->user()->id);
-                } else {
-                    return $site;
-                }
-            })
+
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

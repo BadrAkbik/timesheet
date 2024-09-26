@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GuardResource\Pages;
 use App\Models\Guard;
 use App\Models\Site;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -24,11 +25,26 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
-class GuardResource extends Resource
+class GuardResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Guard::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'restore',
+            'restore_any',
+            'force_delete',
+            'force_delete_any',
+        ];
+    }
 
     public static function getNavigationLabel(): string
     {
