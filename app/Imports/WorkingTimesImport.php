@@ -41,7 +41,7 @@ class WorkingTimesImport implements ToModel, WithValidation, SkipsOnFailure
         return [
             '0' => ['required', 'numeric'],
             '1' => ['required', 'numeric'],
-            '2' => ['required'],
+            '2' => ['required', 'numeric'],
             '3' => ['required', 'string'],
         ];
     }
