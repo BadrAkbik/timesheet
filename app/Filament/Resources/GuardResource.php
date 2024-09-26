@@ -135,6 +135,7 @@ class GuardResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
+            ->paginated([10, 25, 50, 100, 200, 300, 400, 500])
             ->columns([
                 TextColumn::make('name')
                     ->label(__('attributes.name'))
