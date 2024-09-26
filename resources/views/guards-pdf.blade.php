@@ -5,7 +5,7 @@
         }
 
         body {
-            font-size: 16px;
+            font-size: 14px;
             font-family: 'DejaVu Sans', 'Roboto', 'Montserrat', 'Open Sans', sans-serif;
             padding: 10px;
             margin: 10px;
@@ -18,6 +18,7 @@
 
 
         @page {
+            width: 100%;
             size: a4 landscape;
             margin: 0;
             padding: 0;
@@ -25,14 +26,12 @@
 
         .table_component {
             overflow: auto;
-            width: 100%;
         }
 
         .table_component table {
             border: 1px solid #dededf;
             height: 99%;
-            width: 100%;
-            table-layout: fixed;
+            table-layout: auto;
             border-collapse: collapse;
             border-spacing: 1px;
             text-align: right;
@@ -49,7 +48,7 @@
             border: 1px solid #dededf;
             background-color: #eceff1;
             color: #000000;
-            padding: 5px;
+            padding: 7px;
             text-align: center;
         }
 
@@ -57,7 +56,7 @@
             border: 1px solid #dededf;
             background-color: #ffffff;
             color: #000000;
-            padding: 5px;
+            padding: 7px;
         }
 
         td {
@@ -67,8 +66,11 @@
     </style>
 
     <div class="table_component">
-        <table>
+        <table style="float: right;">
             <thead>
+                <tr>
+                    <th colspan="9">{{ $guards->first()->site->name }}</th>
+                </tr>
                 <tr>
                     <th>الراتب</th>
                     <th>البنك</th>
@@ -76,7 +78,6 @@
                     <th>تاريخ المباشرة</th>
                     <th>الهاتف</th>
                     <th>المسمى الوظيفي</th>
-                    <th>اسم الموقع</th>
                     <th>رقم الهوية</th>
                     <th>رقم الحارس</th>
                     <th>الاسم</th>
@@ -89,7 +90,6 @@
                         <td>{{ $guard->start_date }}</td>
                         <td>{{ $guard->phone }}</td>
                         <td>{{ $guard->jobTitle->name }}</td>
-                        <td>{{ $guard->site->name }}</td>
                         <td>{{ $guard->id_number }}</td>
                         <td>{{ $guard->guard_number }}</td>
                         <td>{{ $guard->name }}</td>

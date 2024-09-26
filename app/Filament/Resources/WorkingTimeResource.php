@@ -14,9 +14,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use HusamTariq\FilamentTimePicker\Forms\Components\TimePickerField;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 
 class WorkingTimeResource extends Resource
 {
@@ -61,7 +63,7 @@ class WorkingTimeResource extends Resource
                                 },
                             ])
                             ->required(),
-                        Select::make('guard_id')
+                        Select::make('guard_number')
                             ->label(__('dashboard.the_guard'))
                             ->relationship('secguard', 'name')
                             ->required(),
@@ -84,9 +86,11 @@ class WorkingTimeResource extends Resource
                 TextColumn::make('period')
                     ->label(__('attributes.period'))
                     ->sortable(),
-                TextColumn::make('secguard.name')
+                TextColumn::make("secguard.name")
                     ->label(__('dashboard.the_guard'))
                     ->searchable(isIndividual: true),
+                TextColumn::make('guard_number')
+                    ->label(__('attributes.guard_number')),
                 TextColumn::make('created_at')
                     ->label(__('attributes.created_at'))
                     ->dateTime('d/m/Y H:i:s')
@@ -99,7 +103,22 @@ class WorkingTimeResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('from')->label(__('attributes.from')),
+                        Forms\Components\DatePicker::make('to')->label(__('attributes.to')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['to'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

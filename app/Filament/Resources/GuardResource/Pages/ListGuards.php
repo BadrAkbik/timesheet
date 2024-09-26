@@ -67,12 +67,13 @@ class ListGuards extends ListRecords
                         ->label(__('attributes.site_name'))
                         ->options(Site::whereHas('guards')->pluck('name', 'id'))
                         ->searchable()
+                        ->required()
                         ->live(),
                 ])
                 ->action(function (array $data) {
-                    $site_name = isset($data['site']) ? Site::find($data['site'])->name : 'الكل';
+                    $site_name = Site::find($data['site'])?->name;
 
-                    $guards = isset($data['site']) ? Guard::with('site')->where('site_id', $data['site'])->get() : Guard::with('site')->get();
+                    $guards = Guard::with('site')->where('site_id', $data['site'])->get();
                     $reportHtml = view('guards-pdf', ['guards' => $guards])->render();
                     $arabic = new Arabic();
                     $p = $arabic->arIdentify($reportHtml);

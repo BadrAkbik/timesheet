@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Guard extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Compoships;
 
     protected $guarded = [];
 
@@ -19,7 +20,7 @@ class Guard extends Model
 
     public function workingTimes()
     {
-        return $this->hasMany(WorkingTime::class);
+        return $this->hasMany(WorkingTime::class, ['guard_number', 'site_id'], ['guard_number', 'site_id']);
     }
 
     public function jobTitle()

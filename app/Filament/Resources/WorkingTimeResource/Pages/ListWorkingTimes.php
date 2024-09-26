@@ -11,7 +11,9 @@ use ArPHP\I18N\Arabic;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -81,24 +83,16 @@ class ListWorkingTimes extends ListRecords
                             $set('guard', null);
                         })
                         ->required(),
-                    Select::make('month')
-                        ->label(__('dashboard.month'))
-                        ->options(function (Get $get) {
-                            $months = WorkingTime::selectRaw('MONTH(date) as month')
-                                ->distinct()
-                                ->pluck('month');
-                            $monthOptions = [];
-                            foreach ($months as $month) {
-                                $monthName = Carbon::create()->month($month)->translatedFormat('F');
-                                $monthOptions[$month] = $monthName;
-                            }
-                            return $monthOptions;
-                        })
-                        ->placeholder(__('dashboard.month'))
-                        ->searchable(static fn(Select $component) => !$component->isDisabled())
-                        ->live()
-                        ->preload()
-                        ->disabled(fn(Get $get) => $get('site') ? false : true),
+                    Section::make()->schema([
+                        DatePicker::make('from')
+                            ->label(__('attributes.from'))
+                            ->requiredWith('to')
+                            ->disabled(fn(Get $get) => $get('site') ? false : true),
+                        DatePicker::make('to')
+                            ->requiredWith('from')
+                            ->label(__('attributes.to'))
+                            ->disabled(fn(Get $get) => $get('site') ? false : true),
+                    ])->columns(2),
                     Select::make('guard')
                         ->label(__('dashboard.the_guard'))
                         ->options(
@@ -121,11 +115,11 @@ class ListWorkingTimes extends ListRecords
                     $guards = Guard::with([
                         'workingTimes' => function ($query) use ($data) {
                             $query->when(
-                                $data['month'],
+                                $data['from'] && $data['to'],
                                 function ($query) use ($data) {
-                                    $startOfMonth = Carbon::createFromDate(null, $data['month'], 1)->startOfMonth()->format('Y-m-d');
-                                    $endOfMonth = Carbon::createFromDate(null, $data['month'], 1)->endOfMonth()->format('Y-m-d');
-                                    $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+                                    $from = Carbon::createFromDate($data['from'])->format('Y-m-d');
+                                    $to = Carbon::createFromDate($data['to'])->format('Y-m-d');
+                                    $query->whereBetween('date', [$from, $to]);
                                 }
                             );
                         }

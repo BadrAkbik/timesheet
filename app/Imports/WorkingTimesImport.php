@@ -2,17 +2,14 @@
 
 namespace App\Imports;
 
-use App\Models\Guard;
 use App\Models\WorkingTime;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Closure;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class WorkingTimesImport implements ToModel, WithValidation, WithHeadingRow, SkipsOnFailure
+class WorkingTimesImport implements ToModel, WithValidation, SkipsOnFailure
 {
 
     use SkipsFailures;
@@ -31,38 +28,21 @@ class WorkingTimesImport implements ToModel, WithValidation, WithHeadingRow, Ski
     public function model(array $row)
     {
         return new WorkingTime([
-            'guard_id' => Guard::where('site_id', $this->site_id)->Where('guard_number', $row['guard_number'])->first()?->id,
-            'date' => $this->formatDate($row['date']),
-            'time' => $row['time'],
-            'period' => $row['period'],
+            'guard_number' => $row[0],
+            'site_id' => $this->site_id,
+            'date' => Date::excelToDateTimeObject($row[1]),
+            'time' => Date::excelToDateTimeObject($row[2]),
+            'period' => $row[3],
         ]);
-    }
-
-    private function formatDate($date)
-    {
-        try {
-            return $date ? Carbon::createFromFormat('m/d/Y', $date)->format('Y-m-d') : null;
-        } catch (\Exception $e) {
-            return null; // or handle the error as needed
-        }
     }
 
     public function rules(): array
     {
-
         return [
-            'guard_number' => [
-                'required',
-                function (string $attribute, mixed $value, Closure $fail) {
-                    $guard_id = Guard::where('site_id', $this->site_id)->Where('guard_number', $value)->first()?->id;
-                    if (!isset($guard_id)) {
-                        $fail("لا يوجد حارس مطابق لقيمة {$attribute} في هذا الموقع");
-                    }
-                }
-            ],
-            'date' => ['required', 'string'],
-            'time' => ['required', 'string'],
-            'period' => ['required', 'string'],
+            '0' => ['required', 'numeric'],
+            '1' => ['required', 'numeric'],
+            '2' => ['required'],
+            '3' => ['required', 'string'],
         ];
     }
 }

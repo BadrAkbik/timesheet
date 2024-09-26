@@ -5,7 +5,7 @@
         }
 
         body {
-            font-size: 16px;
+            font-size: 14px;
             font-family: 'DejaVu Sans', 'Roboto', 'Montserrat', 'Open Sans', sans-serif;
             padding: 10px;
             margin: 10px;
@@ -14,6 +14,13 @@
 
         body {
             text-align: right;
+        }
+
+        .separator {
+            font-size: 1px;
+            height: 1px;
+            border-top: 2px solid rgb(126, 126, 126);
+            border-bottom: 1px solid rgba(255, 255, 255, 0);
         }
 
 
@@ -54,12 +61,15 @@
         }
 
         .table_component td {
-            border: 1px solid #dededf;
+            border: 1px solid #fdfdfd;
             background-color: #ffffff;
             color: #000000;
             padding: 5px;
         }
     </style>
+    @php
+        $previousDate = null; // Initialize the variable before the loop
+    @endphp
     @foreach ($guards as $guard)
         <div class="table_component">
             <table>
@@ -73,19 +83,24 @@
                         <th>التاريخ</th>
                     </tr>
                     @foreach ($guard->workingTimes as $key => $workingTime)
+                        @if ($workingTime->date !== $previousDate && $previousDate !== null)
+                            <tr class="separator">
+                                <td colspan="3"></td>
+                            </tr>
+                        @endif
                         <tr>
                             <td>{{ $workingTime->period }}</td>
                             <td>{{ $workingTime->time }}</td>
-                            <td>{{ $workingTime->date }}</td>
-                        </tr>
-                        @if ($key > 0)
-                            @if ($guard->workingTimes[$key - 1]->date === $workingTime->date)
-                                <tr>
-                                    <td colspan="3">--------------------------------------------------------------------------------------------------------------------
-                                    </td>
-                                </tr>
+
+                            @if ($workingTime->date !== $previousDate)
+                                <td>{{ $workingTime->date }}</td>
+                                @php
+                                    $previousDate = $workingTime->date; // Update the previous date
+                                @endphp
+                            @else
+                                <td></td>
                             @endif
-                        @endif
+                        </tr>
                     @endforeach
                 </thead>
                 <tbody></tbody>

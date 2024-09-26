@@ -110,6 +110,7 @@ class GuardResource extends Resource
                             ->numeric()
                             ->maxValue(99999999),
                         Toggle::make('active')
+                            ->default(true)
                             ->required(),
                     ])->columns(2)
             ]);
