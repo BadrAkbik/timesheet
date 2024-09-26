@@ -38,16 +38,16 @@ class GuardsImport implements ToModel, WithValidation
     public function rules(): array
     {
         return [
-            'guard_number' => ['required', 'numeric'],
-            'name' => ['required', 'string'],
-            'id_number' => ['required', 'numeric', Rule::unique('guards', 'id_number')],
-            'site' => ['required', 'exists:sites,name'],
-            'job' => ['required', 'exists:job_titles,name'],
-            'start_date' => ['nullable', 'numeric'],
-            'phone' => ['nullable', 'string'],
-            'ibane' => ['nullable', 'string'],
-            'bank' => ['nullable', 'string'],
-            'salary' => ['nullable', 'string'],
+            '0' => ['required', 'numeric'],
+            '1' => ['required', 'string'],
+            '2' => ['required', 'numeric', Rule::unique('guards', 'id_number')],
+            '3' => ['required', 'exists:sites,name'],
+            '4' => ['required', 'exists:job_titles,name'],
+            '5' => ['nullable', 'numeric'],
+            '6' => ['nullable', 'string'],
+            '7' => ['nullable', 'string'],
+            '8' => ['nullable', 'string'],
+            '9' => ['nullable', 'string'],
         ];
     }
 }
