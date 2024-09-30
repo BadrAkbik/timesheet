@@ -62,11 +62,11 @@ return [
     'iban' => 'Iban',
     'bank' => 'Bank',
     'salary' => 'Salary',
-    'export_reports' => 'Export reports',
+    'export_report' => 'Export report',
     'all' => 'All',
     'all_guards' => 'All guards',
     'guards_select_helper' => 'leave the field empty if you want to get a report for all this site\'s guards',
     'download_excel_example' => 'Download an example of the excel file',
     'export_guards' => 'Export guards',
-
+    'format' => 'Format'
 ];

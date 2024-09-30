@@ -68,7 +68,7 @@
         }
     </style>
     @php
-        $previousDate = null; // Initialize the variable before the loop
+        $previousDate = null;
     @endphp
     @foreach ($guards as $guard)
         <div class="table_component">

@@ -68,10 +68,13 @@ return [
     'iban' => 'آيبان',
     'bank' => 'البنك',
     'salary' => 'الراتب',
-    'export_reports' => 'استخراج تقارير',
+    'export_reports_pdf' => 'استخراج تقرير بصيغة Pdf',
+    'export_report' => 'استخراج تقرير',
+    'export_reports_excel' => 'استخراج تقرير بصيغة Excel',
     'all' => 'الكل',
     'all_guards' => 'كل الحراس',
     'guards_select_helper' => 'اترك الحقل فارغاً في حال كنت تريد تقرير لكل حراس هذا الموقع',
     'download_excel_example' => 'تحميل ملف مثال عن ملف الإكسل',
     'export_guards' => 'استخراج الحراس',
+    'format' => 'الصيغة'
 ];

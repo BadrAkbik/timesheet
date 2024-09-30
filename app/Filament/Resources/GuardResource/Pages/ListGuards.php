@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GuardResource\Pages;
 
+use App\Exports\GuardsExport;
 use App\Filament\Resources\GuardResource;
 use App\Imports\GuardsImport;
 use App\Models\Guard;
@@ -12,7 +13,7 @@ use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -69,6 +70,18 @@ class ListGuards extends ListRecords
                         ->searchable()
                         ->required()
                         ->live(),
+                    ToggleButtons::make('format')
+                        ->label(__('attributes.format'))
+                        ->required()
+                        ->colors([
+                            'pdf' => 'info',
+                            'excel' => 'success',
+                        ])
+                        ->options([
+                            'pdf' => 'Pdf',
+                            'excel' => 'Excel',
+                        ])
+                        ->inline()
                 ])
                 ->action(function (array $data) {
                     $site_name = Site::find($data['site'])?->name;
@@ -83,10 +96,14 @@ class ListGuards extends ListRecords
                         $reportHtml = substr_replace($reportHtml, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
                     }
                     $pdf = Pdf::loadHTML($reportHtml);
-
-                    return response()->streamDownload(function () use ($pdf) {
-                        echo $pdf->stream();
-                    }, "{$site_name} - الحراس.pdf");
+                    if ($data['format'] === 'pdf') {
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->stream();
+                        }, "{$site_name} - الحراس.pdf");
+                        
+                    } elseif ($data['format'] === 'excel') {
+                        return Excel::download(new GuardsExport($guards), "{$site_name} - الحراس.xlsx");
+                    }
                 }),
         ];
     }
