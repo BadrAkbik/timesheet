@@ -40,28 +40,28 @@ class UserResource extends Resource
         return __('attributes.users');
     }
 
-    public static function canDelete($record): bool
-    {
-        $user = auth()->user();
+    // public static function canDelete($record): bool
+    // {
+    //     $user = auth()->user();
 
-        $hasSuperAdminRole = $record->roles->contains(function ($role) {
-            return $role->name === 'super_admin';
-        });
-        return !$hasSuperAdminRole && $user->can('delete_user');
-    }
+    //     $hasSuperAdminRole = $record->roles->contains(function ($role) {
+    //         return $role->name === 'super_admin';
+    //     });
+    //     return !$hasSuperAdminRole && $user->can('delete_user');
+    // }
 
 
-    public static function canEdit($record): bool
-    {
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
+    // public static function canEdit($record): bool
+    // {
+    //     /** @var \App\Models\User $user */
+    //     $user = auth()->user();
 
-        $hasSuperAdminRole = $record->roles->contains(function ($role) {
-            return $role->name === 'super_admin';
-        });
+    //     $hasSuperAdminRole = $record->roles->contains(function ($role) {
+    //         return $role->name === 'super_admin';
+    //     });
 
-        return !$hasSuperAdminRole && $user->can('update_user');
-    }
+    //     return !$hasSuperAdminRole && $user->can('update_user');
+    // }
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
