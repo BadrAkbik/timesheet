@@ -89,7 +89,6 @@ class UserResource extends Resource
                         ->label(__('attributes.password'))
                         ->revealable()
                         ->password()
-                        ->hiddenOn('edit')
                         ->required()
                         ->maxLength(255),
                     Select::make('roles')
