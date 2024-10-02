@@ -128,7 +128,7 @@ class UserResource extends Resource
                 //
             ])
             ->query(function (User $user) {
-                return $user->where('email', "!=", 'admin@admin.com');
+                return $user->where('id', "!=", 1);
             })
             ->actions([
                 EditAction::make(),
