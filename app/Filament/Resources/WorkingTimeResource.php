@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\WorkingTimeResource\Pages;
+use App\Models\Guard;
 use App\Models\WorkingTime;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -11,9 +12,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -105,6 +108,38 @@ class WorkingTimeResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Filter::make('guard')
+                    ->Form([
+                        Select::make('site_id')
+                            ->label(__('attributes.site_name'))
+                            ->relationship('site', 'name')
+                            ->exists('sites', 'id')
+                            ->live()
+                            ->preload()
+                            ->nullable(),
+                        Select::make('guard')
+                            ->label(__('dashboard.the_guard'))
+                            ->reactive()
+                            ->options(
+                                function (Get $get) {
+                                    return Guard::where('site_id', $get('site_id'))->whereHas('workingTimes')->get()->mapWithKeys(function ($guard) {
+                                        return [$guard->guard_number => $guard->name . ' - ' . $guard->guard_number];
+                                    });
+                                }
+                            )
+                            ->disabled(fn(Get $get) => $get('site_id') ? false : true)
+                            ->searchable(static fn(Select $component) => !$component->isDisabled())
+                    ])->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['site_id'],
+                                fn(Builder $query) => $query->where('site_id', $data['site_id'])
+                            )
+                            ->when(
+                                $data['guard'],
+                                fn(Builder $query) => $query->where('guard_number', $data['guard'])->where('site_id', $data['site_id'])
+                            );
+                    }),
                 Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('from')->label(__('attributes.from')),
@@ -121,10 +156,7 @@ class WorkingTimeResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                             );
                     }),
-                SelectFilter::make('site_id')
-                    ->label(__('attributes.site'))
-                    ->relationship('site', 'name')
-            ])
+                ], layout: FiltersLayout::AboveContentCollapsible)->filtersFormColumns(2)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

@@ -13,6 +13,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class GuardsImport implements ToModel, WithValidation
 {
+    protected $site;
     
     /**
      * @param array $row
@@ -35,10 +36,16 @@ class GuardsImport implements ToModel, WithValidation
         ]);
     }
 
+    public function prepareForValidation($data, $index)
+    {
+        $this->site = Site::firstWhere('name', $data[3])->id;
+        return $data;
+    }
+
     public function rules(): array
     {
         return [
-            '0' => ['required', 'numeric'],
+            '0' => ['required', 'numeric', Rule::unique('guards', 'guard_number')->where('site_id', $this->site)],
             '1' => ['required', 'string'],
             '2' => ['required', 'numeric', Rule::unique('guards', 'id_number')],
             '3' => ['required', 'exists:sites,name'],

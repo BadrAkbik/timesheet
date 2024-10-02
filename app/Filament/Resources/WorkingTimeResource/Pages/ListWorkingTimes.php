@@ -82,18 +82,32 @@ class ListWorkingTimes extends ListRecords
     public function getExportAction($data)
     {
         $site = Site::findOrFail($data['site']);
-        $guards = Guard::with([
-            'workingTimes' => function ($query) use ($data) {
-                $query->when(
-                    $data['from'] && $data['to'],
-                    function ($query) use ($data) {
-                        $from = Carbon::createFromDate($data['from'])->format('Y-m-d');
-                        $to = Carbon::createFromDate($data['to'])->format('Y-m-d');
-                        $query->whereBetween('date', [$from, $to]);
-                    }
-                );
-            }
-        ]);
+        $guards = Guard::
+            with([
+                'workingTimes' => function ($query) use ($data) {
+                    $query->when(
+                        $data['from'] && $data['to'],
+                        function ($query) use ($data) {
+                            $from = Carbon::createFromDate($data['from'])->format('Y-m-d');
+                            $to = Carbon::createFromDate($data['to'])->format('Y-m-d');
+                            $query->whereBetween('date', [$from, $to]);
+                        }
+                    );
+                }
+            ])
+            ->whereHas(
+                'workingTimes',
+                function ($query) use ($data) {
+                    $query->when(
+                        $data['from'] && $data['to'],
+                        function ($query) use ($data) {
+                            $from = Carbon::createFromDate($data['from'])->format('Y-m-d');
+                            $to = Carbon::createFromDate($data['to'])->format('Y-m-d');
+                            $query->whereBetween('date', [$from, $to]);
+                        }
+                    );
+                }
+            );
         if (isset($data['guard'])) {
             $guard_name = Guard::find($data['guard'])->name;
             $guards = $guards->where('id', $data['guard'])->get();
