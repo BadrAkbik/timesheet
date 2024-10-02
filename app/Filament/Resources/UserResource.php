@@ -50,10 +50,6 @@ class UserResource extends Resource
         return !$hasSuperAdminRole && $user->can('delete_user');
     }
 
-    public static function canDeleteAny(): bool
-    {
-        return false;
-    }
 
     public static function canEdit($record): bool
     {
@@ -131,6 +127,9 @@ class UserResource extends Resource
             ->filters([
                 //
             ])
+            ->query(function (User $user) {
+                return $user->where('email', "!=", 'admin@admin.com');
+            })
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
