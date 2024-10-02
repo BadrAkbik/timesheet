@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use HusamTariq\FilamentTimePicker\Forms\Components\TimePickerField;
 use Closure;
@@ -119,7 +120,10 @@ class WorkingTimeResource extends Resource
                                 $data['to'],
                                 fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                             );
-                    })
+                    }),
+                SelectFilter::make('site_id')
+                    ->label(__('attributes.site'))
+                    ->relationship('site', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
