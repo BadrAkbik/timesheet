@@ -87,6 +87,7 @@ class UserResource extends Resource
                         ->maxLength(255),
                     TextInput::make('password')
                         ->label(__('attributes.password'))
+                        ->revealable()
                         ->password()
                         ->hiddenOn('edit')
                         ->required()
