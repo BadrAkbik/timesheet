@@ -21,7 +21,7 @@
                         <td>{{ $guard->name }}</td>
                         <td>{{ $guard->guard_number }}</td>
                         <td>{{ $guard->id_number }}</td>
-                        <td>{{ $guard->jobTitle->name }}</td>
+                        <td>{{ $guard?->jobTitle?->name }}</td>
                         <td>{{ $guard->phone }}</td>
                         <td>{{ $guard->start_date }}</td>
                         <td>{{ $guard->bank }}</td>
