@@ -69,7 +69,7 @@
         <table style="float: right;">
             <thead>
                 <tr>
-                    <th colspan="9">{{ $guards->first()->site->name }}</th>
+                    <th colspan="9">{{ $guards?->first()?->site?->name }}</th>
                 </tr>
                 <tr>
                     <th>الراتب</th>
@@ -84,17 +84,15 @@
                 </tr>
                 @foreach ($guards as $guard)
                     <tr>
-                        @isset($guard)
-                            <td>{{ $guard->salary }}</td>
-                            <td>{{ $guard->iban }}</td>
-                            <td>{{ $guard->bank }}</td>
-                            <td>{{ $guard->start_date }}</td>
-                            <td>{{ $guard->phone }}</td>
-                            <td>{{ $guard->jobTitle->name }}</td>
-                            <td>{{ $guard->id_number }}</td>
-                            <td>{{ $guard->guard_number }}</td>
-                            <td>{{ $guard->name }}</td>
-                        @endisset
+                        <td>{{ $guard->salary }}</td>
+                        <td>{{ $guard->iban }}</td>
+                        <td>{{ $guard->bank }}</td>
+                        <td>{{ $guard->start_date }}</td>
+                        <td>{{ $guard->phone }}</td>
+                        <td>{{ $guard->jobTitle?->name }}</td>
+                        <td>{{ $guard->id_number }}</td>
+                        <td>{{ $guard->guard_number }}</td>
+                        <td>{{ $guard->name }}</td>
                     </tr>
                 @endforeach
             </thead>
