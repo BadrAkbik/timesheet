@@ -84,15 +84,17 @@
                 </tr>
                 @foreach ($guards as $guard)
                     <tr>
-                        <td>{{ $guard->salary }}</td>
-                        <td>{{ $guard->iban }}</td>
-                        <td>{{ $guard->bank }}</td>
-                        <td>{{ $guard->start_date }}</td>
-                        <td>{{ $guard->phone }}</td>
-                        <td>{{ $guard->jobTitle->name }}</td>
-                        <td>{{ $guard->id_number }}</td>
-                        <td>{{ $guard->guard_number }}</td>
-                        <td>{{ $guard->name }}</td>
+                        @isset($guard)
+                            <td>{{ $guard->salary }}</td>
+                            <td>{{ $guard->iban }}</td>
+                            <td>{{ $guard->bank }}</td>
+                            <td>{{ $guard->start_date }}</td>
+                            <td>{{ $guard->phone }}</td>
+                            <td>{{ $guard->jobTitle->name }}</td>
+                            <td>{{ $guard->id_number }}</td>
+                            <td>{{ $guard->guard_number }}</td>
+                            <td>{{ $guard->name }}</td>
+                        @endisset
                     </tr>
                 @endforeach
             </thead>
