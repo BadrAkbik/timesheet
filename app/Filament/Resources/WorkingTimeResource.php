@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WorkingTimeResource\Pages;
 use App\Models\Guard;
+use App\Models\Site;
 use App\Models\WorkingTime;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -67,9 +68,14 @@ class WorkingTimeResource extends Resource
                                 },
                             ])
                             ->required(),
-                        Select::make('guard_number')
+                        Select::make('site_id')
+                            ->label(__('attributes.site_name'))
+                            ->relationship('site', 'name')
+                            ->exists('sites', 'id')
+                            ->preload()
+                            ->searchable(),
+                        TextInput::make('guard_number')
                             ->label(__('dashboard.the_guard'))
-                            ->relationship('secguard', 'name')
                             ->required(),
                     ])->columnSpan(1)
             ]);
@@ -156,7 +162,7 @@ class WorkingTimeResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                             );
                     }),
-                ], layout: FiltersLayout::AboveContentCollapsible)->filtersFormColumns(2)
+            ], layout: FiltersLayout::AboveContentCollapsible)->filtersFormColumns(2)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
