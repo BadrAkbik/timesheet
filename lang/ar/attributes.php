@@ -76,5 +76,9 @@ return [
     'guards_select_helper' => 'اترك الحقل فارغاً في حال كنت تريد تقرير لكل حراس هذا الموقع',
     'download_excel_example' => 'تحميل ملف مثال عن ملف الإكسل',
     'export_guards' => 'استخراج الحراس',
-    'format' => 'الصيغة'
+    'format' => 'الصيغة',
+    'sites_permissions' => 'صلاحيات المواقع',
+    'create' => 'إنشاء',
+    'update' => 'تحديث',
+    'tables_without_spacing' => 'بدون فراغات بين الجداول',
 ];

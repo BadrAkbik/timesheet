@@ -4,14 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WorkingTimeResource\Pages;
 use App\Models\Guard;
-use App\Models\Site;
 use App\Models\WorkingTime;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -19,9 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use HusamTariq\FilamentTimePicker\Forms\Components\TimePickerField;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -113,6 +109,19 @@ class WorkingTimeResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->query(function(WorkingTime $workingTime){
+                $hasSuperAdminRole = auth()->user()->roles->contains(function ($role) {
+                    return $role->name === 'super_admin';
+                });
+
+                if ($hasSuperAdminRole) {
+                    return $workingTime;
+                } else {
+                    return $workingTime->whereHas('site.usersPermissions', function ($workingTime) {
+                        $workingTime->where('name', 'view_site')->where('permissions_users_sites.user_id', auth()->user()->id);
+                    });
+                }
+            })
             ->filters([
                 Filter::make('guard')
                     ->Form([

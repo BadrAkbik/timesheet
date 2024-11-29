@@ -3,22 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\Role;
+use App\Models\Site;
 use App\Models\User;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Spatie\Permission\Models\Permission;
 
 class UserResource extends Resource
 {
@@ -48,19 +48,6 @@ class UserResource extends Resource
     //         return $role->name === 'super_admin';
     //     });
     //     return !$hasSuperAdminRole && $user->can('delete_user');
-    // }
-
-
-    // public static function canEdit($record): bool
-    // {
-    //     /** @var \App\Models\User $user */
-    //     $user = auth()->user();
-
-    //     $hasSuperAdminRole = $record->roles->contains(function ($role) {
-    //         return $role->name === 'super_admin';
-    //     });
-
-    //     return !$hasSuperAdminRole && $user->can('update_user');
     // }
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
@@ -93,10 +80,30 @@ class UserResource extends Resource
                         ->multiple()
                         ->preload()
                         ->searchable(),
-                    Hidden::make('email_verified_at')->default(now())
+                    Hidden::make('email_verified_at')->default(now()),
+                    Repeater::make('sitesPermissions')
+                        ->label(__('attributes.sites_permissions'))
+                        ->schema([
+                            Select::make('site_id')
+                                ->label(__('attributes.site_name'))
+                                ->options(Site::pluck('name', 'id'))
+                                ->required(),
+                            Select::make('permission_id')
+                                ->label(__('attributes.permission'))
+                                ->exists('permissions', 'id')
+                                ->options(
+                                    function () {
+                                        return Permission::where('name', 'view_site')->orWhere('name', 'update_site')->pluck('name', 'id')->toArray();
+                                    }
+                                )
+                                ->required(),
+                        ])
+                        ->columns(2)
+                        ->columnSpan(2)
                 ])->columns(2),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {

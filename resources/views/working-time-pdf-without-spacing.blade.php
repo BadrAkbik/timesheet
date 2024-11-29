@@ -33,18 +33,19 @@
         .table_component {
             overflow: auto;
             width: 100%;
+            margin-bottom: 10px;
+            page-break-inside: avoid;
         }
 
         .table_component table {
             border: 1px solid #dededf;
-            height: 99%;
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
             border-spacing: 1px;
             text-align: right;
-            page-break-before: avoid;
-            page-break-after: avoid;
+            margin: 0;
+            padding: 0;
         }
 
         .table_component caption {

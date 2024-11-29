@@ -4,12 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiteResource\Pages;
 use App\Models\Site;
-use App\Models\User;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -35,6 +31,21 @@ class SiteResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return __('attributes.sites');
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = auth()->user();
+
+        $hasSuperAdminRole = $user->roles->contains(function ($role) {
+            return $role->name === 'super_admin';
+        });
+
+        $canUpdate = $record->usersPermissions()
+            ->where('name', 'update_site')
+            ->wherePivot('user_id', $user->id)
+            ->exists();
+        return $hasSuperAdminRole || $canUpdate;
     }
 
     public static function form(Form $form): Form
@@ -72,7 +83,18 @@ class SiteResource extends Resource
             ->filters([
                 //
             ])
-
+            ->query(function (Site $site) {
+                $hasSuperAdminRole = auth()->user()->roles->contains(function ($role) {
+                    return $role->name === 'super_admin';
+                });
+                if ($hasSuperAdminRole) {
+                    return $site;
+                } else {
+                    return $site->whereHas('usersPermissions', function ($query) {
+                        $query->where('name', 'view_site')->where('permissions_users_sites.user_id', auth()->user()->id);
+                    });
+                }
+            })
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

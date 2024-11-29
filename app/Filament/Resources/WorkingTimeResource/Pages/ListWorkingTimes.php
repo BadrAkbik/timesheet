@@ -11,6 +11,7 @@ use ArPHP\I18N\Arabic;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -81,6 +82,7 @@ class ListWorkingTimes extends ListRecords
 
     public function getExportAction($data)
     {
+        $without_spacing = $data['without_spacing'];
         $site = Site::findOrFail($data['site']);
         $guards = Guard::
             with([
@@ -117,7 +119,11 @@ class ListWorkingTimes extends ListRecords
         }
 
         if ($data['format'] === 'pdf') {
-            $reportHtml = view('working-time-pdf', ['guards' => $guards])->render();
+            if($without_spacing){
+                $reportHtml = view('working-time-pdf-without-spacing', ['guards' => $guards])->render();
+            }else{
+                $reportHtml = view('working-time-pdf', ['guards' => $guards])->render();
+            }
             $arabic = new Arabic();
             $p = $arabic->arIdentify($reportHtml);
 
@@ -185,7 +191,8 @@ class ListWorkingTimes extends ListRecords
                     'pdf' => 'Pdf',
                     'excel' => 'Excel',
                 ])
-                ->inline()
+                ->inline(),
+            Checkbox::make('without_spacing')->label(__('attributes.tables_without_spacing'))
         ];
     }
 }
